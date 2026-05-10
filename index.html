@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Averette's Solutions</title>
+  <link rel="icon" type="image/png" href="logo-main.png" />
+  <script>
+    function getInitials(name) {
+      return name
+        .split(' ')
+        .filter(word => word.length > 0)
+        .map(word => word[0].toUpperCase())
+        .join('')
+        .slice(0, 3) || 'NA';1
+    }
+
+    function formatDateMMDDYYYY() {
+      const now = new Date();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const year = now.getFullYear();
+      return `${month}${day}${year}`;
+    }
+
+    function getDailyQuoteCounter(datePart) {
+      const storageKey = `averettes_quote_counter_${datePart}`;
+      const currentCount = Number(localStorage.getItem(storageKey) || 0) + 1;
+      localStorage.setItem(storageKey, currentCount);
+      return String(currentCount).padStart(2, '0');
+    }
+
+    function getRandomCode() {
+      const array = new Uint32Array(1);
+      crypto.getRandomValues(array);
+      return String(array[0]).slice(-4).padStart(4, '0');
+    }
+
+    function createQuoteNumber(name) {
+      const initials = getInitials(name);
+      const datePart = formatDateMMDDYYYY();
+      const counter = getDailyQuoteCounter(datePart);
+      const randomCode = getRandomCode();
+
+      return `AS-${initials}-${datePart}-${counter}${randomCode}`;
+    }
+
+    function initBeforeAfterSliders() {
+      document.querySelectorAll('.before-after-slider').forEach(slider => {
+        const control = slider.querySelector('.slider-control');
+        const afterImage = slider.querySelector('.after-img');
+        const line = slider.querySelector('.slider-line');
+
+        function updateSlider(value) {
+          afterImage.style.clipPath = `inset(0 ${100 - value}% 0 0)`;
+          line.style.left = `${value}%`;
+        }
+
+        updateSlider(control.value);
+        control.addEventListener('input', event => updateSlider(event.target.value));
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', initBeforeAfterSliders);
+
+    function sendQuoteEmail(event) {
+      event.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const service = document.getElementById('service').value;
+      const message = document.getElementById('message').value.trim();
+
+      const quoteNumber = createQuoteNumber(name);
+
+      const subject = encodeURIComponent(`Quote Request ${quoteNumber} - Averette's Solutions`);
+      const body = encodeURIComponent(
+        `Quote Request Number: ${quoteNumber}
+
+` +
+        `Hey, this is ${name}.
+
+` +
+        `Can you give me a call or email me at ${email}${phone ? ` or ${phone}` : ''}?
+
+` +
+        `I wanted to get a quote on ${service}.
+
+` +
+        `Here are the details:
+${message}
+
+` +
+        `Thank you.`
+      );
+
+      window.location.href = `mailto:maverette@averettesolution.com?subject=${subject}&body=${body}`;
+    }
+  </script>
+
+  <style>
+    :root {
+      --dark: #171717;
+      --charcoal: #262626;
+      --gray: #666;
+      --light: #f6f3ee;
+      --white: #ffffff;
+      --orange: #d85f13;
+      --orange-dark: #a63f00;
+      --green: #3f5f45;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.16);
+      --radius: 24px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: min(1120px, 92%);
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(23, 23, 23, 0.92);
+      backdrop-filter: blur(14px);
+      color: var(--white);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    nav {
+      min-height: 78px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      font-size: 1.25rem;
+    }
+
+    .logo-img {
+      height: 46px;
+      width: auto;
+      max-width: 230px;
+      object-fit: contain;
+      display: block;
+      filter: brightness(0) invert(1);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .nav-links a:hover {
+      color: var(--white);
+    }
+
+    .nav-cta {
+      background: var(--orange);
+      padding: 11px 18px;
+      border-radius: 999px;
+      color: white;
+      font-weight: 700;
+    }
+
+    .hero {
+      position: relative;
+      min-height: 720px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      color: white;
+      background:
+        radial-gradient(circle at 75% 20%, rgba(216, 95, 19, 0.35), transparent 32%),
+        linear-gradient(110deg, rgba(0, 0, 0, 0.86), rgba(0, 0, 0, 0.58)),
+        url('background.jpg') center/cover no-repeat;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -10% -120px -10%;
+      height: 260px;
+      background: var(--light);
+      transform: rotate(-3deg);
+      transform-origin: left center;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 780px;
+      padding: 100px 0 160px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow span {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #62d26f;
+      box-shadow: 0 0 18px #62d26f;
+    }
+
+    .hero h1 {
+      font-size: clamp(3rem, 7vw, 6.6rem);
+      line-height: 0.95;
+      letter-spacing: -0.08em;
+      margin-bottom: 24px;
+    }
+
+    .hero p {
+      max-width: 650px;
+      font-size: clamp(1.1rem, 2vw, 1.4rem);
+      color: rgba(255, 255, 255, 0.82);
+      margin-bottom: 34px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px 24px;
+      border-radius: 999px;
+      font-weight: 800;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--orange), #ff8a2a);
+      color: white;
+      box-shadow: 0 14px 35px rgba(216, 95, 19, 0.35);
+    }
+
+    .btn-secondary {
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .stats {
+      position: relative;
+      z-index: 5;
+      margin-top: -110px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 28px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card strong {
+      display: block;
+      color: var(--orange);
+      font-size: 2rem;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    section {
+      padding: 90px 0;
+    }
+
+    .section-title {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: end;
+      margin-bottom: 42px;
+    }
+
+    .section-title h2 {
+      font-size: clamp(2.2rem, 4vw, 4rem);
+      line-height: 1;
+      letter-spacing: -0.06em;
+    }
+
+    .section-title p {
+      color: var(--gray);
+      font-size: 1.05rem;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .service-card {
+      position: relative;
+      min-height: 240px;
+      padding: 28px;
+      background: white;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow);
+    }
+
+    .service-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 6px;
+      background: linear-gradient(90deg, var(--orange), var(--green));
+    }
+
+    .service-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: #fff0e6;
+      color: var(--orange);
+      font-size: 1.7rem;
+      margin-bottom: 24px;
+    }
+
+    .service-card h3 {
+      font-size: 1.35rem;
+      margin-bottom: 12px;
+      letter-spacing: -0.03em;
+    }
+
+    .service-card p {
+      color: var(--gray);
+    }
+
+    .feature-band {
+      background: var(--dark);
+      color: white;
+      border-radius: 36px;
+      padding: 56px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 40px;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .feature-band::after {
+      content: "";
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      right: -120px;
+      top: -120px;
+      background: rgba(216, 95, 19, 0.25);
+      filter: blur(4px);
+    }
+
+    .feature-band h2 {
+      font-size: clamp(2rem, 4vw, 3.8rem);
+      line-height: 1;
+      letter-spacing: -0.06em;
+      margin-bottom: 18px;
+    }
+
+    .feature-band p {
+      color: rgba(255, 255, 255, 0.72);
+      max-width: 580px;
+    }
+
+    .check-list {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      gap: 14px;
+    }
+
+    .check-list div {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      padding: 16px;
+      font-weight: 700;
+    }
+
+    .gallery {
+      background: #eee8df;
+    }
+
+    .before-after-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .before-after-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    }
+
+    .before-after-card h3 {
+      margin-bottom: 14px;
+      font-size: 1.2rem;
+      letter-spacing: -0.03em;
+    }
+
+    .before-after-slider {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      border-radius: 20px;
+      background: #ddd;
+      isolation: isolate;
+    }
+
+    .before-after-slider img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .before-img {
+      z-index: 1;
+    }
+
+    .after-img {
+      z-index: 2;
+      clip-path: inset(0 50% 0 0);
+    }
+
+    .slider-control {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: ew-resize;
+    }
+
+    .slider-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      z-index: 4;
+      width: 3px;
+      background: white;
+      box-shadow: 0 0 14px rgba(0, 0, 0, 0.45);
+      pointer-events: none;
+    }
+
+    .slider-line::after {
+      content: "↔";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: white;
+      color: var(--orange);
+      font-weight: 900;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .label {
+      position: absolute;
+      top: 14px;
+      z-index: 6;
+      background: rgba(0, 0, 0, 0.62);
+      color: white;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
+    .before-label {
+      left: 14px;
+    }
+
+    .after-label {
+      right: 14px;
+    }
+
+    .gallery-item.large {
+      grid-row: span 2;
+    }
+
+    .quote {
+      background: var(--green);
+      color: white;
+    }
+
+    .quote-card {
+      background: white;
+      color: var(--dark);
+      border-radius: 36px;
+      padding: 44px;
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 36px;
+      box-shadow: var(--shadow);
+    }
+
+    .quote-card h2 {
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1;
+      letter-spacing: -0.06em;
+      margin-bottom: 18px;
+    }
+
+    .quote-card p {
+      color: var(--gray);
+    }
+
+    form {
+      display: grid;
+      gap: 14px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 15px 16px;
+      border: 1px solid #ddd;
+      border-radius: 14px;
+      font: inherit;
+      background: #fafafa;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .contact {
+      background: var(--charcoal);
+      color: white;
+      padding: 70px 0;
+    }
+
+    .contact-brand {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 34px;
+    }
+
+    .contact-logo {
+      width: 110px;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 50%;
+      background: white;
+      padding: 6px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+      flex: 0 0 auto;
+    }
+
+    .contact-brand h2 {
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      line-height: 1;
+      letter-spacing: -0.06em;
+      margin-bottom: 10px;
+    }
+
+    .contact-brand p {
+      color: rgba(255, 255, 255, 0.72);
+      max-width: 560px;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 18px;
+    }
+
+    .contact-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .contact-card span {
+      display: block;
+      color: rgba(255, 255, 255, 0.58);
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+
+    .contact-card strong,
+    .contact-card a {
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .form-note {
+      font-size: 0.92rem;
+      color: var(--gray);
+    }
+
+    .form-note a {
+      color: var(--orange);
+      font-weight: 800;
+    }
+
+    footer {
+      background: #111;
+      color: rgba(255, 255, 255, 0.65);
+      text-align: center;
+      padding: 22px;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 850px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        min-height: 640px;
+      }
+
+      .stats-grid,
+      .services-grid,
+      .section-title,
+      .feature-band,
+      .quote-card,
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-brand {
+        align-items: flex-start;
+      }
+
+      .stats {
+        margin-top: -70px;
+      }
+
+      .before-after-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-band,
+      .quote-card {
+        padding: 30px;
+        border-radius: 26px;
+      }
+    }
+  
+
+    /* Better responsive behavior across desktops, tablets, and phones */
+    @media (max-width: 1100px) {
+      .hero h1 {
+        max-width: 760px;
+      }
+
+      .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .gallery-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 850px) {
+      nav {
+        min-height: auto;
+        padding: 18px 0;
+        align-items: flex-start;
+      }
+
+      .logo {
+        font-size: 1.05rem;
+      }
+
+      .logo-img {
+        height: 40px;
+        max-width: 210px;
+      }
+
+      .nav-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 10px;
+        font-size: 0.88rem;
+      }
+
+      .nav-links a:not(.nav-cta) {
+        display: none;
+      }
+
+      .nav-cta {
+        padding: 10px 14px;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      .hero-content {
+        padding: 86px 0 130px;
+      }
+
+      .hero h1 {
+        font-size: clamp(2.6rem, 13vw, 4.8rem);
+        letter-spacing: -0.07em;
+      }
+
+      .hero p {
+        font-size: 1.05rem;
+      }
+
+      .hero-actions {
+        align-items: stretch;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .stats-grid,
+      .services-grid,
+      .section-title,
+      .feature-band,
+      .quote-card,
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        margin-top: -70px;
+      }
+
+      section {
+        padding: 64px 0;
+      }
+
+      .section-title {
+        gap: 18px;
+        margin-bottom: 28px;
+      }
+
+      .service-card {
+        min-height: auto;
+      }
+
+      .before-after-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-band,
+      .quote-card {
+        padding: 30px;
+        border-radius: 26px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .contact-brand {
+        flex-direction: column;
+      }
+
+      .contact-logo {
+        width: 96px;
+        height: 96px;
+      }
+
+      .container {
+        width: min(100% - 32px, 1120px);
+      }
+
+      header {
+        position: relative;
+      }
+
+      nav {
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .nav-links {
+        width: 100%;
+        justify-content: stretch;
+      }
+
+      .nav-cta {
+        display: block;
+        width: 100%;
+        text-align: center;
+      }
+
+      .hero-content {
+        padding: 70px 0 120px;
+      }
+
+      .eyebrow {
+        font-size: 0.86rem;
+      }
+
+      .hero h1 {
+        font-size: clamp(2.45rem, 15vw, 4rem);
+      }
+
+      .stat-card,
+      .service-card,
+      .contact-card {
+        padding: 22px;
+        border-radius: 20px;
+      }
+
+      .feature-band,
+      .quote-card {
+        padding: 24px;
+        border-radius: 22px;
+      }
+
+      input,
+      select,
+      textarea {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <a href="#home" class="logo">
+          <img src="logo-main.png" alt="Averette's Solutions Logo" class="logo-img" />
+        </a>
+
+        <div class="nav-links">
+          <a href="#home">Home</a>
+          <a href="#services">Services</a>
+          <a href="#gallery">Gallery</a>
+          <a href="#quote">Quote</a>
+          <a href="#contact">Contact</a>
+          <a href="tel:2656525525" class="nav-cta">Call 265-652-5525</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="home">
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <div class="eyebrow"><span></span> Reliable local service</div>
+          <h1>Built strong. Finished clean.</h1>
+          <p>Handyman work, fencing, pressure washing, tree trimming, landscaping, and junk removal handled with care, speed, and a clean finish.</p>
+          <div class="hero-actions">
+            <a href="tel:2656525525" class="btn btn-primary">Tap to Call Now</a>
+            <a href="#quote" class="btn btn-secondary">Request a Quote by Email</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="stats">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <strong>6+</strong>
+            <p>Core home and property services</p>
+          </div>
+          <div class="stat-card">
+            <strong>Fast</strong>
+            <p>Simple quotes and direct communication</p>
+          </div>
+          <div class="stat-card">
+            <strong>Clean</strong>
+            <p>Professional work with a finished look</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section id="services" class="services">
+      <div class="container">
+        <div class="section-title">
+          <h2>Services that keep your property sharp.</h2>
+          <p>From repairs to cleanup, Averette's Solutions helps homeowners and businesses handle the jobs that need dependable hands and a polished result.</p>
+        </div>
+
+        <div class="services-grid">
+          <article class="service-card">
+            <div class="service-icon">▥</div>
+            <h3>Fence Installation & Repair</h3>
+            <p>New fencing, repairs, gate fixes, and clean installations built for strength and curb appeal.</p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">✦</div>
+            <h3>Pressure Washing</h3>
+            <p>Refresh driveways, siding, patios, walkways, and outdoor spaces with a clean, renewed finish.</p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">♣</div>
+            <h3>Tree Cutting & Trimming</h3>
+            <p>Trim overgrowth, remove problem limbs, and improve the look and safety of your property.</p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">▤</div>
+            <h3>Junk Removal</h3>
+            <p>Clear unwanted items, old furniture, debris, and clutter without the headache.</p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">☘</div>
+            <h3>Landscaping</h3>
+            <p>Yard cleanup, trimming, planting, edging, and seasonal property refreshes.</p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">◈</div>
+            <h3>Handyman Services</h3>
+            <p>Small repairs, fixes, installs, and maintenance jobs handled with practical skill.</p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">⌂</div>
+            <h3>Sheds & Playhouses</h3>
+            <p>Assembly, installation, and repairs for backyard sheds and playhouses built to last.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="feature-band">
+          <div>
+            <h2>One call. Multiple solutions.</h2>
+            <p>Instead of juggling five different contractors, get one dependable team for the outdoor, repair, and cleanup work your property needs.</p>
+          </div>
+          <div class="check-list">
+            <div>✓ Free and simple quote requests</div>
+            <div>✓ Residential and small business jobs</div>
+            <div>✓ Clear communication from start to finish</div>
+            <div>✓ All major forms of payment accepted</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="gallery" class="gallery">
+      <div class="container">
+        <div class="section-title">
+          <h2>Before & after gallery</h2>
+          <p>Drag the slider to compare the work before and after. Replace the image file names with real project photos when ready.</p>
+        </div>
+
+        <div class="before-after-grid">
+          <div class="before-after-card">
+            <h3>Fence Work</h3>
+            <div class="before-after-slider">
+              <img src="fence-before.jpg" alt="Fence before project" class="before-img" />
+              <img src="fence-after.jpg" alt="Fence after project" class="after-img" />
+              <input type="range" min="0" max="100" value="50" class="slider-control" aria-label="Compare fence before and after" />
+              <div class="slider-line"></div>
+              <span class="label before-label">Before</span>
+              <span class="label after-label">After</span>
+            </div>
+          </div>
+
+          <div class="before-after-card">
+            <h3>Pressure Washing</h3>
+            <div class="before-after-slider">
+              <img src="washing-before.jpg" alt="Pressure washing before project" class="before-img" />
+              <img src="washing-after.jpg" alt="Pressure washing after project" class="after-img" />
+              <input type="range" min="0" max="100" value="50" class="slider-control" aria-label="Compare pressure washing before and after" />
+              <div class="slider-line"></div>
+              <span class="label before-label">Before</span>
+              <span class="label after-label">After</span>
+            </div>
+          </div>
+
+          <div class="before-after-card">
+            <h3>Landscaping</h3>
+            <div class="before-after-slider">
+              <img src="landscape-before.jpg" alt="Landscaping before project" class="before-img" />
+              <img src="landscape-after.jpg" alt="Landscaping after project" class="after-img" />
+              <input type="range" min="0" max="100" value="50" class="slider-control" aria-label="Compare landscaping before and after" />
+              <div class="slider-line"></div>
+              <span class="label before-label">Before</span>
+              <span class="label after-label">After</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="quote" class="quote">
+      <div class="container">
+        <div class="quote-card">
+          <div>
+            <h2>Need a quote?</h2>
+            <p>Tell us what you need done, where the job is located, and the best way to reach you. When you submit the form, your email app will open with the quote request ready to send.</p>
+            <br />
+            <a href="tel:2656525525" class="btn btn-primary">Prefer faster service? Call Now</a>
+          </div>
+
+          <form onsubmit="sendQuoteEmail(event)">
+            <input id="name" type="text" placeholder="Full Name" required />
+            <input id="phone" type="tel" placeholder="Phone Number" required />
+            <input id="email" type="email" placeholder="Email Address" required />
+            <select id="service" required>
+              <option value="" selected disabled>Choose a service</option>
+              <option>Fence Installation & Repair</option>
+              <option>Pressure Washing</option>
+              <option>Tree Cutting & Trimming</option>
+              <option>Junk Removal</option>
+              <option>Landscaping & Yard Cleanup</option>
+              <option>Handyman Services</option>
+              <option>Sheds & Playhouses</option>
+            </select>
+            <textarea id="message" placeholder="Briefly describe the job" required></textarea>
+            <button class="btn btn-primary" type="submit">Send Quote Request</button>
+            <p class="form-note">After clicking, review the email and press send. Need help now? <a href="tel:2656525525">Call 265-652-5525</a>.</p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="contact">
+      <div class="container">
+        <div class="contact-brand">
+          <img src="circle-logo.png" alt="Averette's Solutions Circle Logo" class="contact-logo" />
+          <div>
+            <h2>Ready to get it handled?</h2>
+            <p>Call now for faster service, or send a quote request and include the details of the job.</p>
+          </div>
+        </div>
+
+        <div class="contact-grid">
+          <div class="contact-card">
+            <span>Phone</span>
+            <a href="tel:2656525525">265-652-5525</a>
+          </div>
+          <div class="contact-card">
+            <span>Email</span>
+            <a href="mailto:maverette@averettesolution.com">maverette@averettesolution.com</a>
+          </div>
+          <div class="contact-card">
+            <span>Payments</span>
+            <strong>All forms accepted</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 Averette's Solutions. All Rights Reserved.</p>
+  </footer>
+</body>
+</html>
