@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Averette's Solutions</title>
-  <link rel="icon" type="image/png" href="logo-circle.png" />
+  <link rel="icon" type="image/png" href="logo-main.png" />
+  <link rel="apple-touch-icon" href="logo-main.png" />
   <script>
     function getInitials(name) {
       return name
@@ -48,16 +49,14 @@
     function initBeforeAfterSliders() {
       document.querySelectorAll('.before-after-slider').forEach(slider => {
         const control = slider.querySelector('.slider-control');
-        const afterImage = slider.querySelector('.after-img');
-        const line = slider.querySelector('.slider-line');
 
         function updateSlider(value) {
-          afterImage.style.clipPath = `inset(0 ${100 - value}% 0 0)`;
-          line.style.left = `${value}%`;
+          slider.style.setProperty('--position', `${value}%`);
         }
 
         updateSlider(control.value);
         control.addEventListener('input', event => updateSlider(event.target.value));
+        control.addEventListener('change', event => updateSlider(event.target.value));
       });
     }
 
@@ -473,6 +472,7 @@ ${message}
     }
 
     .before-after-slider {
+      --position: 50%;
       position: relative;
       width: 100%;
       aspect-ratio: 4 / 3;
@@ -496,7 +496,7 @@ ${message}
 
     .after-img {
       z-index: 2;
-      clip-path: inset(0 50% 0 0);
+      clip-path: inset(0 calc(100% - var(--position)) 0 0);
     }
 
     .slider-control {
@@ -513,12 +513,13 @@ ${message}
       position: absolute;
       top: 0;
       bottom: 0;
-      left: 50%;
+      left: var(--position);
       z-index: 4;
       width: 3px;
       background: white;
       box-shadow: 0 0 14px rgba(0, 0, 0, 0.45);
       pointer-events: none;
+      transform: translateX(-50%);
     }
 
     .slider-line::after {
@@ -1039,16 +1040,16 @@ ${message}
     <section id="gallery" class="gallery">
       <div class="container">
         <div class="section-title">
-          <h2>Before & After Gallery</h2>
-          <p>Drag the slider to compare the work before and after.</p>
+          <h2>Before & after gallery</h2>
+          <p>Drag the slider to compare the work before and after. Replace the image file names with real project photos when ready.</p>
         </div>
 
         <div class="before-after-grid">
           <div class="before-after-card">
             <h3>Fence Work</h3>
             <div class="before-after-slider">
-              <img src="fence-before.jpg" alt="Fence before project" class="before-img" />
-              <img src="fence-after.jpg" alt="Fence after project" class="after-img" />
+              <img src="fence-before.jpg" alt="Fence before project" class="before-img" loading="lazy" />
+              <img src="fence-after.jpg" alt="Fence after project" class="after-img" loading="lazy" />
               <input type="range" min="0" max="100" value="50" class="slider-control" aria-label="Compare fence before and after" />
               <div class="slider-line"></div>
               <span class="label before-label">Before</span>
@@ -1059,8 +1060,8 @@ ${message}
           <div class="before-after-card">
             <h3>Pressure Washing</h3>
             <div class="before-after-slider">
-              <img src="washing-before.jpg" alt="Pressure washing before project" class="before-img" />
-              <img src="washing-after.jpg" alt="Pressure washing after project" class="after-img" />
+              <img src="washing-before.jpg" alt="Pressure washing before project" class="before-img" loading="lazy" />
+              <img src="washing-after.jpg" alt="Pressure washing after project" class="after-img" loading="lazy" />
               <input type="range" min="0" max="100" value="50" class="slider-control" aria-label="Compare pressure washing before and after" />
               <div class="slider-line"></div>
               <span class="label before-label">Before</span>
@@ -1071,8 +1072,8 @@ ${message}
           <div class="before-after-card">
             <h3>Landscaping</h3>
             <div class="before-after-slider">
-              <img src="landscape-before.jpg" alt="Landscaping before project" class="before-img" />
-              <img src="landscape-after.jpg" alt="Landscaping after project" class="after-img" />
+              <img src="landscape-before.jpg" alt="Landscaping before project" class="before-img" loading="lazy" />
+              <img src="landscape-after.jpg" alt="Landscaping after project" class="after-img" loading="lazy" />
               <input type="range" min="0" max="100" value="50" class="slider-control" aria-label="Compare landscaping before and after" />
               <div class="slider-line"></div>
               <span class="label before-label">Before</span>
